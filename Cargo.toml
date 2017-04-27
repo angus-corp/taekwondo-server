@@ -1,0 +1,28 @@
+[package]
+name = "ttkkdd"
+version = "0.1.0"
+authors = ["Ram <quadrupleslap@gmail.com>"]
+
+[dependencies]
+badlog = "0.2"
+base64 = "0.4"
+bincode = "0.7.0"
+byteorder = "1.0"
+chrono = { version = "0.3", features = ["serde"] }
+diesel = { version = "0.12", features = ["postgres"] }
+diesel_codegen = { version = "0.12", features = ["postgres"] }
+iron = "0.5"
+juniper = { version = "0.7.0", features = ["iron-handlers"] }
+lettre = "0.6"
+log = "0.3"
+logger = "0.3"
+persistent = "0.3"
+unicase = "1.4"
+r2d2 = "0.7"
+r2d2-diesel = "0.12"
+regex = "0.2"
+router = "0.5"
+serde = "0.9"
+serde_json = "0.9"
+serde_derive = "0.9"
+sodiumoxide = "0.0.14"
