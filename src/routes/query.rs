@@ -490,9 +490,9 @@ graphql_object!(Mutate: Context as "Mutate" |&self| {
         let changes = UserChanges {
             first_name: first_name,
             last_name: last_name,
-            username: username.to_lowercase(),
+            username: username.map(|x| x.to_lowercase()),
             password: hash.as_ref().map(|x| x.as_ref()),
-            email: email.to_lowercase(),
+            email: email.map(|x| x.to_lowercase()),
             role: role
         };
 
