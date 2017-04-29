@@ -156,11 +156,11 @@ pub fn login(
     use schema::users::dsl::*;
 
     let result = if creds.username.contains('@') {
-        users.filter(email.eq(creds.username))
+        users.filter(email.eq(creds.username.to_lowercase()))
             .select((id, password))
             .first::<(i64, Vec<u8>)>(conn)
     } else {
-        users.filter(username.eq(creds.username))
+        users.filter(username.eq(creds.username.to_lowercase()))
             .select((id, password))
             .first::<(i64, Vec<u8>)>(conn)
     };
@@ -182,7 +182,7 @@ pub fn forgot(
     use schema::users::dsl::*;
 
     let (uid, pwhash, uname) = users
-        .filter(email.eq(user_email))
+        .filter(email.eq(user_email.to_lowercase()))
         .select((id, password, username))
         .first::<(i64, Vec<u8>, String)>(conn)?;
 

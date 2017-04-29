@@ -21,6 +21,7 @@ use schema::{users, locations, instructor_locations};
 
 //LONG: Move the caches into the context or something, to improve performance.
 //LONG: MODULARISE.
+//LONG: More robust solution to case-insensitive usernames and emails.
 
 //LONG: Stop being lazy.
 macro_rules! sleiss {
@@ -415,9 +416,9 @@ graphql_object!(Mutate: Context as "Mutate" |&self| {
         let new_user = NewUser {
             first_name: first_name,
             last_name: last_name,
-            username: username,
+            username: username.to_lowercase(),
             password: hash.as_ref(),
-            email: email
+            email: email.to_lowercase()
         };
 
         diesel::insert(&new_user)
@@ -489,9 +490,9 @@ graphql_object!(Mutate: Context as "Mutate" |&self| {
         let changes = UserChanges {
             first_name: first_name,
             last_name: last_name,
-            username: username,
+            username: username.to_lowercase(),
             password: hash.as_ref().map(|x| x.as_ref()),
-            email: email,
+            email: email.to_lowercase(),
             role: role
         };
 
