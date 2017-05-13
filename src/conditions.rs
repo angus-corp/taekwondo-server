@@ -87,7 +87,7 @@ impl<'a> Cache<'a> {
         let exists = select(exists(
                 instructor_locations::table.filter(
                     instructor_locations::location_id.nullable()
-                    .eq(any( //LONG: Optimize.
+                    .eq(any(
                         users::table
                             .find(target)
                             .select(users::training_location)))

@@ -27,7 +27,6 @@ pub struct Cookie {
     pub expiry: DateTime<UTC>
 }
 
-//LONG: Better Authorization method name.
 const SCHEME: &'static str = "HELLO";
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

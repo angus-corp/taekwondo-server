@@ -25,12 +25,12 @@ use schema::{users, locations, instructor_locations};
 
 //LONG: Stop being lazy.
 macro_rules! sleiss {
-    ($req:expr, $skip:expr, $count:expr, $db:expr) => {
-        match ($skip, $count) {
-            (Some(skip), Some(count)) =>
-                $req.offset(skip).limit(count).get_results($db),
-            (Some(skip), None) =>
-                $req.offset(skip).get_results($db),
+    ($req:expr, $offset:expr, $count:expr, $db:expr) => {
+        match ($offset, $count) {
+            (Some(offset), Some(count)) =>
+                $req.offset(offset).limit(count).get_results($db),
+            (Some(offset), None) =>
+                $req.offset(offset).get_results($db),
             (None, Some(count)) =>
                 $req.limit(count).get_results($db),
             (None, None) =>
@@ -326,14 +326,14 @@ graphql_object!(Query: Context as "Query" |&self| {
     //LONG: Way to search and filter locations.
     field locations(
         &executor,
-        skip: Option<i64>,
+        offset: Option<i64>,
         count: Option<i64>
     ) -> Result<Vec<Location>, String>
     as "All the locations, alphabetized by name." {
         let mut cache = cache(executor.context(), None);
         check(&mut cache, conditions::read_location_info)?;
         let db = &**cache.database();
-        sleiss!(locations::table.order(locations::name), skip, count, db)
+        sleiss!(locations::table.order(locations::name), offset, count, db)
             .map_err(stringify_error)
     }
 
@@ -357,7 +357,7 @@ graphql_object!(Query: Context as "Query" |&self| {
     //LONG: Maybe add more constraints.
     field users(
         &executor,
-        skip: Option<i64>,
+        offset: Option<i64>,
         count: Option<i64>,
         query: Option<String>
     ) -> Result<Vec<UserWrapper>, String>
@@ -373,11 +373,11 @@ graphql_object!(Query: Context as "Query" |&self| {
                         .concat(users::first_name)
                         .concat(" ")
                         .concat(users::last_name)).desc()),
-                skip, count, &**first_cache.database()
+                offset, count, &**first_cache.database()
             )
         } else {
             let db = &**first_cache.database();
-            sleiss!(users::table.order(users::id), skip, count, db)
+            sleiss!(users::table.order(users::id), offset, count, db)
         };
 
         res.map(|users| users.into_iter()
