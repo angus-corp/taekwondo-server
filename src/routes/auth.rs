@@ -9,6 +9,13 @@ use iron::status;
 use persistent::Read;
 use serde_json;
 
+#[derive(Serialize, Deserialize)]
+pub struct RawResetRequest {
+    id: i64,
+    code: String,
+    new_password: String
+}
+
 /// POST /auth/login
 /// Body:
 ///     username: The user's username or email.
@@ -86,10 +93,25 @@ pub fn reset(req: &mut Request) -> IronResult<Response> {
     let config = req.extensions.get::<Read<Config>>().unwrap();
     let db = req.extensions.get::<Database>().unwrap().get().unwrap();
 
-    let de = serde_json::from_reader::<_, ResetConfirmation>(&mut req.body);
+    let de = serde_json::from_reader::<_, RawResetRequest>(&mut req.body);
     let conf = match de {
         Ok(conf) => conf,
         Err(_) => return Ok(Response::with(status::BadRequest))
+    };
+
+    let code = match base64::decode_config(&conf.code, base64::URL_SAFE) {
+        Ok(ref vec) if vec.len() == 32 => {
+            let mut res = [0; 32];
+            res.clone_from_slice(vec);
+            res
+        }
+        _ => return Ok(Response::with(status::UnprocessableEntity))
+    };
+
+    let conf = ResetConfirmation {
+        id: conf.id,
+        code: code,
+        new_password: conf.new_password
     };
 
     let code = match auth::reset(&db, config.secret, conf) {

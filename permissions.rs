@@ -2,6 +2,7 @@ permissions! {
 // These are the roles. Lower numbers have less privileges.
 // Higher ranks automatically have lower ranks' privileges.
 // Make sure you have the lowest one at zero, because that's the default.
+// Leave plenty of numbers in between just in case you want to add more later.
 [ member = 0 | admin = 100 ]
 
 // These are the permissions.

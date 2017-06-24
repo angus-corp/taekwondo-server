@@ -1,6 +1,5 @@
 use auth::ResetInfo;
 use base64;
-use byteorder::{ByteOrder, LittleEndian};
 use config::Config;
 use lettre::transport::smtp::{
     SmtpTransportBuilder,
@@ -20,21 +19,13 @@ pub fn reset_password(
     info: ResetInfo,
     to: &str
 ) -> SmtpResult {
-    //LONG: Heap allocations for encoding entirely avoidable.
-
-    let id = {
-        let mut buf = [0; 8];
-        LittleEndian::write_i64(&mut buf, info.id);
-        base64::encode_config(&buf, base64::URL_SAFE)
-    };
-
     let code = base64::encode_config(&info.mac, base64::URL_SAFE);
 
     //LONG: Don't just make up URLs as you go!
     let link = format!(
         "{}/auth/reset?id={}&code={}",
         config.frontend_url,
-        id,
+        info.id,
         code
     );
 
