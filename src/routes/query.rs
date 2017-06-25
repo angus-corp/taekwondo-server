@@ -416,9 +416,9 @@ graphql_object!(Mutate: Context as "Mutate" |&self| {
         let new_user = NewUser {
             first_name: first_name,
             last_name: last_name,
-            username: username.to_lowercase(),
+            username: username,
             password: hash.as_ref(),
-            email: email.to_lowercase()
+            email: email
         };
 
         diesel::insert(&new_user)
@@ -490,9 +490,9 @@ graphql_object!(Mutate: Context as "Mutate" |&self| {
         let changes = UserChanges {
             first_name: first_name,
             last_name: last_name,
-            username: username.map(|x| x.to_lowercase()),
+            username: username,
             password: hash.as_ref().map(|x| x.as_ref()),
-            email: email.map(|x| x.to_lowercase()),
+            email: email,
             role: role
         };
 
