@@ -1,6 +1,6 @@
-table! {
-    use diesel::types::*;
+use diesel::types::*;
 
+table! {
     users {
         id -> BigInt,
         first_name -> Text,
@@ -14,8 +14,6 @@ table! {
 }
 
 table! {
-    use diesel::types::*;
-
     locations {
         id -> BigInt,
         name -> Text,
@@ -26,11 +24,15 @@ table! {
 }
 
 table! {
-    use diesel::types::*;
-    
     instructor_locations {
         id -> BigInt,
         instructor_id -> BigInt,
         location_id -> BigInt,
     }
 }
+
+sql_function!(
+    lower,
+    LowerT,
+    (a: Text) -> Text
+);

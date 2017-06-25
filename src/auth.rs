@@ -153,13 +153,14 @@ pub fn login(
     duration: Duration
 ) -> Result<Cookie, ()> {
     use schema::users::dsl::*;
+    use schema::lower;
 
     let result = if creds.username.contains('@') {
-        users.filter(email.eq(creds.username))
+        users.filter(lower(email).eq(lower(creds.username)))
             .select((id, password))
             .first::<(i64, Vec<u8>)>(conn)
     } else {
-        users.filter(username.eq(creds.username))
+        users.filter(lower(username).eq(lower(creds.username)))
             .select((id, password))
             .first::<(i64, Vec<u8>)>(conn)
     };
@@ -179,9 +180,10 @@ pub fn forgot(
     user_email: &str
 ) -> Result<ResetInfo, diesel::result::Error> {
     use schema::users::dsl::*;
+    use schema::lower;
 
     let (uid, pwhash, uname) = users
-        .filter(email.eq(user_email))
+        .filter(lower(email).eq(lower(user_email)))
         .select((id, password, username))
         .first::<(i64, Vec<u8>, String)>(conn)?;
 
